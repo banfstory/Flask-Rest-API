@@ -61,6 +61,10 @@ python run.py
 The local server will start at:
 👉 http://127.0.0.1:5000
 
+**Examples:**
+- Getting users: http://127.0.0.1:5000/api/users
+- Getting posts: http://127.0.0.1:5000/api/posts
+- Getting comments: http://127.0.0.1:5000/api/comments
 
 ## ⚙️ Changing the Port Number
 By default, Flask runs on port 5000.
