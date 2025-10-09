@@ -5,6 +5,15 @@ It serves as the backend for the [React Forum Frontend](https://github.com/banfs
 
 The API handles all server-side operations — user authentication, forums, posts, and comments — and communicates with the React frontend via HTTP requests.
 
+## 🚀 Overview
+
+- A REST API built with **Flask-RESTful**
+- Runs inside a **virtual environment** for dependency isolation
+- Requires **Python 3.10.0** for full compatibility with dependencies
+- Provides **CRUD endpoints** for posts and comments
+- Supports **CORS** for frontend communication
+- Easily configurable **port and environment settings**
+
 ## 📦 Related Repositories
 
 - **Frontend (React App):** [React-Forum-Frontend](https://github.com/banfstory/React-Forum-Frontend)
@@ -12,6 +21,13 @@ The API handles all server-side operations — user authentication, forums, post
 ## 🖥️ Running the Flask API (Windows Instructions)
 
 Follow these steps to set up and run the Flask API locally:
+
+### 0. Verify Python version
+Make sure you are using Python 3.10.0 (otherwise some libraries may not work if a different python version is used):
+```bash
+python --version
+# Should output: Python 3.10.0
+```
 
 ### 1. Create a virtual environment
 Create a new virtual environment inside the project folder:
@@ -78,7 +94,7 @@ src/mixin/default_API_URL.js
 const REST_API_URL = 'http://127.0.0.1:5000/api/';
 ```
 → to match your new port:
-```
+```javascript
 const REST_API_URL = 'http://127.0.0.1:8000/api/';
 ```
 
