@@ -1,4 +1,4 @@
-# 🧩 REST-API-FLASK
+# 🧩 Flask-Rest-API
 
 This repository contains the **Flask RESTful API** for the Forum Web App.  
 It serves as the backend for the [React Forum Frontend](https://github.com/banfstory/React-Forum-Frontend).
