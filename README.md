@@ -1,11 +1,86 @@
-# REST-API-FLASK
-FLASK RESTFUL API INSTRUCTIONS: To run the Flask API, it needs to run on a local server and it will be running the application from a virtual environment so that all packages will be already pre-installed within the whole folder itself. The flask api is on a seperate repo: https://github.com/banfstory/REST-API-FLASK.
+# 🧩 REST-API-FLASK
 
-To run the virtual environment do the following (instructions for windows OS only), start with going into command prompt:
+This repository contains the **Flask RESTful API** for the Forum Web App.  
+It serves as the backend for the [React Forum Frontend](https://github.com/banfstory/React-Forum-Frontend).
 
-1. Go and download the flask api repo folder (https://github.com/banfstory/REST-API-FLASK)
-2. Enter 'venv\Scripts\activate' to activate the virtual environment
-3. Go to the following path: flask_api (folder)
-4. Enter 'python run.py' to run the local server
+The API handles all server-side operations — user authentication, forums, posts, and comments — and communicates with the React frontend via HTTP requests.
 
-If you want to change the port number for the localhost, go to the following path: flask_api (folder) > run.py . Look for the code 'app.run(debug=True, port=5000)' on line 14 and change the 'port' parameter (localhost uses port number 5000 by default) WARNING: If you change the port number for the FLASK API port number, you will also need to change the api http request url with a different port number in order for the react frontend to call the correct API server. To change this, go to the path: react_frontend (folder) > src (folder) > mixin (folder) > default_API_URL.js. Look for the code 'const REST_API_URL = 'http://127.0.0.1:5000/api/' on line 1 and change the url's port to reflect the changes made in the port for the API server.
+## 📦 Related Repositories
+
+- **Frontend (React App):** [React-Forum-Frontend](https://github.com/banfstory/React-Forum-Frontend)
+
+## 🖥️ Running the Flask API (Windows Instructions)
+
+Follow these steps to set up and run the Flask API locally:
+
+### 1. Create a virtual environment
+Create a new virtual environment inside the project folder:
+```bash
+python -m venv venv
+```
+This creates a folder named `venv` that keeps all project dependencies isolated.
+
+### 2. Activate the virtual environment
+```bash
+venv\Scripts\activate
+```
+When activated, your terminal prompt will show `(venv)`.
+
+### 3. Install required libraries
+Install all dependencies listed in requirements.txt:
+```
+pip install -r requirements.txt
+```
+This ensures Flask, Flask-CORS, SQLAlchemy, and other required libraries are installed.
+
+### 4. Navigate to the Flask app directory
+```
+cd flask_api
+```
+
+### 5. Run the Flask server
+```
+python run.py
+```
+The local server will start at:
+👉 http://127.0.0.1:5000
+
+
+## ⚙️ Changing the Port Number
+By default, Flask runs on port 5000.
+To change it:
+### 1. Open the file:
+```
+flask_api/run.py
+```
+### 2. Locate the line:
+```python
+app.run(debug=True, port=5000)
+```
+
+### 3. Change the port number (e.g., 8000):
+```python
+app.run(debug=True, port=8000)
+```
+
+## 🔗 Updating the Frontend API URL
+If you change the Flask port, you must also update the frontend API URL so both apps communicate properly.
+
+In the **frontend repository**:  
+👉 [React-Forum-Frontend](https://github.com/banfstory/React-Forum-Frontend)
+
+### 1. In your React frontend repo, open:
+```
+src/mixin/default_API_URL.js
+```
+### 2. Update the first line:
+```javascript
+const REST_API_URL = 'http://127.0.0.1:5000/api/';
+```
+→ to match your new port:
+```
+const REST_API_URL = 'http://127.0.0.1:8000/api/';
+```
+
+## 📜 License
+This project is licensed under the [MIT License](https://github.com/banfstory/Flask-Rest-API/blob/main/LICENSE).
