@@ -18,7 +18,7 @@ The API handles all server-side operations — user authentication, forums, post
 
 - **Frontend (React App):** [React-Forum-Frontend](https://github.com/banfstory/React-Forum-Frontend)
 - **Frontend (Vue App):** [Vue-Forum-Frontend](https://github.com/banfstory/Vue-Forum-Frontend)
-- 
+  
 ## 🖥️ Running the Flask API (Windows Instructions)
 
 Follow these steps to set up and run the Flask API locally:
