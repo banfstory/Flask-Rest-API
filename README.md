@@ -1,7 +1,7 @@
 # 🧩 Flask-Rest-API
 
 This repository contains the **Flask RESTful API** for the Forum Web App.  
-It serves as the backend for the [React Forum Frontend](https://github.com/banfstory/React-Forum-Frontend).
+It serves as the backend for the [React Forum Frontend](https://github.com/banfstory/React-Forum-Frontend) and [Vue Forum Frontend](https://github.com/banfstory/Vue-Forum-Frontend).
 
 The API handles all server-side operations — user authentication, forums, posts, and comments — and communicates with the React frontend via HTTP requests.
 
@@ -17,7 +17,8 @@ The API handles all server-side operations — user authentication, forums, post
 ## 📦 Related Repositories
 
 - **Frontend (React App):** [React-Forum-Frontend](https://github.com/banfstory/React-Forum-Frontend)
-
+- **Frontend (Vue App):** [Vue-Forum-Frontend](https://github.com/banfstory/Vue-Forum-Frontend)
+- 
 ## 🖥️ Running the Flask API (Windows Instructions)
 
 Follow these steps to set up and run the Flask API locally:
@@ -83,7 +84,7 @@ app.run(debug=True, port=5000)
 app.run(debug=True, port=8000)
 ```
 
-## 🔗 Updating the Frontend API URL
+## 🔗 Updating the React Frontend API URL
 If you change the Flask port, you must also update the frontend API URL so both apps communicate properly.
 
 In the **frontend repository**:  
@@ -100,6 +101,25 @@ const REST_API_URL = 'http://127.0.0.1:5000/api/';
 → to match your new port:
 ```javascript
 const REST_API_URL = 'http://127.0.0.1:8000/api/';
+```
+
+## 🔗 Updating the Vue Frontend API URL
+If you change the Flask port, you must also update the frontend API URL so both apps communicate properly.
+
+In the **frontend repository**:  
+👉 [Vue-Forum-Frontend](https://github.com/banfstory/Vue-Forum-Frontend)
+
+### 1. In your Vue frontend repo, open:
+```
+vue_frontend\src\main.js
+```
+### 2. Update the Vue mixin:
+```javascript
+domain_name_api: 'http://127.0.0.1:5000/api/'
+```
+→ to match your new port:
+```javascript
+domain_name_api: 'http://127.0.0.1:8000/api/'
 ```
 
 ## 📜 License
