@@ -69,7 +69,7 @@ def api_create_post(c_user):
         input_validator.validPostTitle(title, errors)
         input_validator.validPostContent(content, errors)
         if len(errors) > 0:
-            return jsonify(errors)
+            return jsonify(errors), 400
     except:
         return jsonify({'message': 'Invalid request'}), 400
     forum = Forum.query.get(forum_id)
@@ -91,7 +91,7 @@ def api_create_comment(c_user):
         errors = dict()
         input_validator.validCommentContent(content, errors)
         if len(errors) > 0:
-            return jsonify(errors)
+            return jsonify(errors), 400
     except:
         return jsonify({'message': 'Invalid request'}), 400
     post = Post.query.get(post_id)
@@ -115,7 +115,7 @@ def api_create_reply(c_user):
         errors = dict()
         input_validator.validReplyContent(content, errors)
         if len(errors) > 0:
-            return jsonify(errors)
+            return jsonify(errors), 400
     except:
         return jsonify({'message': 'Invalid request'}), 400
     comment = Comment.query.get(comment_id)
@@ -139,7 +139,7 @@ def api_create_forum(c_user):
         input_validator.validForumName(name, errors)
         input_validator.validForumAbout(about, errors)
         if len(errors) > 0:
-            return jsonify(errors)
+            return jsonify(errors), 400
     except:
         return jsonify({'message': 'Invalid request'}), 400
     exist = db.session.query(Forum).filter(db.func.lower(Forum.name)==db.func.lower(name)).first()
@@ -163,7 +163,7 @@ def api_register():
         input_validator.validEmail(email, errors)
         input_validator.validPassword(password, errors)
         if len(errors) > 0:
-            return jsonify(errors)
+            return jsonify(errors), 400
         user = db.session.query(User).filter(db.func.lower(User.username)==db.func.lower(username)).first()
         if not user:
             hash_password = bcrypt.generate_password_hash(password).decode('utf-8')
@@ -240,7 +240,7 @@ def api_update_post(c_user, id):
         input_validator.validPostTitle(title, errors)
         input_validator.validPostContent(content, errors)
         if len(errors) > 0:
-            return jsonify(errors)
+            return jsonify(errors), 400
     except:
         return jsonify({'message': 'Invalid request'}), 400
     post.title = title
@@ -261,7 +261,7 @@ def api_update_comment(c_user, id):
         errors = dict()
         input_validator.validCommentContent(content, errors)
         if len(errors) > 0:
-            return jsonify(errors)
+            return jsonify(errors), 400
     except:
         return jsonify({'message': 'Invalid request'}), 400
     comment.content = content
@@ -281,7 +281,7 @@ def api_update_reply(c_user, id):
         errors = dict()
         input_validator.validReplyContent(content, errors)
         if len(errors) > 0:
-            return jsonify(errors)
+            return jsonify(errors), 400
     except:
         return jsonify({'message': 'Invalid request'}), 400
     reply.content = content
@@ -301,7 +301,7 @@ def api_update_forum(c_user, id):
         errors = dict()
         input_validator.validForumAbout(about, errors)
         if len(errors) > 0:
-            return jsonify(errors)
+            return jsonify(errors), 400
     except:
         return jsonify({'message': 'Invalid request'}), 400
     forum.about = about
@@ -323,7 +323,7 @@ def api_update_account(c_user):
         input_validator.validUsername(username, errors)
         input_validator.validEmail(email, errors)
         if len(errors) > 0:
-            return jsonify(errors)
+            return jsonify(errors), 400
         c_user.username = username
         c_user.email = email
         db.session.commit()
@@ -342,7 +342,7 @@ def api_change_password(c_user):
         errors = dict()
         input_validator.validPassword(new_password, errors)
         if len(errors) > 0:
-            return jsonify(errors)
+            return jsonify(errors), 400
         if bcrypt.check_password_hash(c_user.password, old_password):
             hash_new_pass = bcrypt.generate_password_hash(new_password).decode('utf-8')
             c_user.password = hash_new_pass

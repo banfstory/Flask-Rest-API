@@ -24,9 +24,9 @@ class input_validator:
     @classmethod
     #Forum validation
     def validForumName(self, name, errors):
-        pattern = r'^\w{3,25}$'
+        pattern = r'^[\w\s]{3,25}$'
         if not re.search(pattern, name):
-            errors.update({'forum_name_errors' : 'Forum name must be between 3 and 25 characters long and must not have any white spaces'})
+            errors.update({'forum_name_errors' : 'Forum name must be between 3 and 25 characters long'})
 
     @classmethod
     def validForumAbout(self, about, errors):
