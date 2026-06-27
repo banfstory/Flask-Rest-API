@@ -77,7 +77,6 @@ def api_create_post(c_user):
         return jsonify({'message': 'Invalid request'}), 400
     post = Post(title=title, content=content, forum_id=forum_id, user_id=c_user.id)
     db.session.add(post)
-    forum.num_of_post += 1
     db.session.commit()
     result = post_schema.dump(post)
     return jsonify({'post': result})
@@ -100,11 +99,11 @@ def api_create_comment(c_user):
         return jsonify({'message': 'Invalid request'}), 400
     comment = Comment(content=content, post_id=post_id, user_id=c_user.id)
     db.session.add(comment)
-    post.num_of_comments += 1
     db.session.commit()
     user = user_schema.dump(comment.comment_user)
     post = forum_schema.dump(comment.comment_post)
-    return jsonify({'comment': {'id': comment.id, 'content': comment.content, 'date_commented': comment.date_commented, 'num_of_reply':comment.num_of_reply, 'user': user, 'post':post}})
+    num_of_reply = len(comment.reply)
+    return jsonify({'comment': {'id': comment.id, 'content': comment.content, 'date_commented': comment.date_commented, 'num_of_reply': num_of_reply, 'user': user, 'post':post}})
 
 @api.route('/api/reply', methods=['POST'])
 @token_required
@@ -124,7 +123,6 @@ def api_create_reply(c_user):
         return jsonify({'message': 'Invalid request'}), 400
     reply = Reply(content=content, comment_id=comment_id, user_id=c_user.id)
     db.session.add(reply)
-    comment.num_of_reply += 1
     db.session.commit()
     user = user_schema.dump(reply.reply_user)
     comment = forum_schema.dump(reply.reply)
@@ -188,7 +186,6 @@ def follow_forum(c_user, id):
     if follow:
         return jsonify({'message' : 'User is already following'}), 400
     Forum.query.filter_by(id=id).first().follow_forum.append(c_user)
-    forum.followers += 1
     db.session.commit()
     result  = forum_schema.dump(forum)
     return jsonify({'forum' : result})
@@ -371,7 +368,6 @@ def api_delete_post(c_user, id):
             db.session.delete(r)
     if comment:
         comment.delete()  # delete comment all at once
-    post.forum.num_of_post -= 1
     db.session.delete(post)
     db.session.commit()
     result = post_schema.dump(post)
@@ -386,7 +382,6 @@ def api_delete_comment(c_user, id):
     reply = Reply.query.filter_by(comment_id=comment.id)
     if reply:
         reply.delete()  # dlete reply all at once
-    comment.comment_post.num_of_comments -= 1
     db.session.delete(comment)
     db.session.commit()
     result = comment_schema.dump(comment)
@@ -398,7 +393,6 @@ def api_delete_reply(c_user, id):
     reply = Reply.query.filter_by(id=id, user_id=c_user.id).first()
     if reply is None:
         return jsonify({'message': 'Invalid request'}), 400
-    reply.reply.num_of_reply -= 1
     db.session.delete(reply)
     db.session.commit()
     result = reply_schema.dump(reply)
@@ -413,7 +407,6 @@ def unfollow_forum(c_user, id):
         return jsonify({'message' : 'User is not currently following this forum'}), 400
     user = User.query.filter_by(id=c_user.id).first()
     user.follow.remove(forum)
-    forum.followers -= 1
     db.session.commit()
     result  = forum_schema.dump(forum)
     return jsonify({'forum' : result})
@@ -461,7 +454,8 @@ def api_get_posts():
     for post in posts.items:
         user = user_schema.dump(post.author)
         forum = forum_schema.dump(post.forum)
-        result.append({'id': post.id, 'title': post.title, 'date_posted': post.date_posted, 'content': post.content, 'num_of_comments': post.num_of_comments, 'user': user, 'forum': forum})
+        num_of_comments = len(post.comment_post)
+        result.append({'id': post.id, 'title': post.title, 'date_posted': post.date_posted, 'content': post.content, 'num_of_comments': num_of_comments, 'user': user, 'forum': forum})
     paginate = list()
     for p in posts.iter_pages():
         paginate.append(p)
@@ -474,7 +468,10 @@ def api_get_post(id):
         return jsonify({'message': 'Post not found'}), 400
     user = user_schema.dump(post.author)
     forum = forum_schema.dump(post.forum)
-    return jsonify({'post': {'id': post.id, 'title': post.title, 'date_posted': post.date_posted, 'content': post.content, 'num_of_comments': post.num_of_comments, 'user': user, 'forum': forum}})
+    if forum.get('num_of_post') is None:
+        forum['num_of_post'] = len(Forum.query.get(forum["id"]).forum)
+    num_of_comments = len(post.comment_post)
+    return jsonify({'post': {'id': post.id, 'title': post.title, 'date_posted': post.date_posted, 'content': post.content, 'num_of_comments': num_of_comments, 'user': user, 'forum': forum}})
 
 @api.route('/api/comments', methods=['GET'])
 def api_get_comments():
@@ -495,7 +492,8 @@ def api_get_comments():
     for comment in comments.items:
         user = user_schema.dump(comment.comment_user)
         post = forum_schema.dump(comment.comment_post)
-        result.append({'id': comment.id, 'content': comment.content, 'date_commented': comment.date_commented, 'num_of_reply':comment.num_of_reply, 'user': user, 'post':post})
+        num_of_reply = len(comment.reply)
+        result.append({'id': comment.id, 'content': comment.content, 'date_commented': comment.date_commented, 'num_of_reply':num_of_reply, 'user': user, 'post':post})
     paginate = list()
     for p in comments.iter_pages():
         paginate.append(p)
@@ -508,7 +506,8 @@ def api_get_comment(id):
         return jsonify({'message': 'Comment not found'}), 400
     user = user_schema.dump(comment.comment_user)
     post = forum_schema.dump(comment.comment_post)
-    return jsonify({'comment': {'id': comment.id, 'content': comment.content, 'date_commented': comment.date_commented, 'num_of_reply':comment.num_of_reply, 'user': user, 'post':post}})
+    num_of_reply = len(comment.reply_comment)
+    return jsonify({'comment': {'id': comment.id, 'content': comment.content, 'date_commented': comment.date_commented, 'num_of_reply':num_of_reply, 'user': user, 'post':post}})
 
 @api.route('/api/replys', methods=['GET'])
 def api_get_replys():
@@ -555,7 +554,8 @@ def api_get_forums():
     result = list()
     for forum in forums.items:
         user = user_schema.dump(forum.owner)
-        result.append({'id': forum.id, 'name': forum.name, 'date_created': forum.date_created, 'about': forum.about, 'display_picture': forum.display_picture, 'followers': forum.followers, 'num_of_post': forum.num_of_post, 'user': user})
+        num_of_post = len(forum.forum)
+        result.append({'id': forum.id, 'name': forum.name, 'date_created': forum.date_created, 'about': forum.about, 'display_picture': forum.display_picture, 'followers': forum.followers, 'num_of_post': num_of_post, 'user': user})
     paginate = list()
     for p in forums.iter_pages():
         paginate.append(p)
@@ -579,7 +579,8 @@ def api_get_forum():
     if forum is None:
         return jsonify({'message': 'Forum not found'}), 400
     user = user_schema.dump(forum.owner)
-    return jsonify({'forum': {'id': forum.id, 'name': forum.name, 'date_created': forum.date_created, 'about': forum.about, 'display_picture': forum.display_picture, 'followers': forum.followers, 'num_of_post': forum.num_of_post, 'user': user}})
+    num_of_post = len(forum.forum)
+    return jsonify({'forum': {'id': forum.id, 'name': forum.name, 'date_created': forum.date_created, 'about': forum.about, 'display_picture': forum.display_picture, 'followers': forum.followers, 'num_of_post': num_of_post, 'user': user}})
 
 @api.route('/api/users', methods=['GET'])
 def api_get_all_user():
@@ -624,6 +625,8 @@ def api_get_user():
     if user is None:
         return jsonify({'message': 'User not found'}), 400
     result = user_schema.dump(user)
+    if result.get('forums_followed') is None:
+        result['forums_followed'] = len(user.follow.all())
     return jsonify({'user': result})
 
 @api.route('/api/autocomplete', methods=['GET'])
